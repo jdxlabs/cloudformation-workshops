@@ -1,6 +1,7 @@
 {
+    "AWSTemplateFormatVersion": "2010-09-09",
     "Resources": {
-        "wescale-jd-test-json": {
+        "TestJson": {
             "Type": "AWS::S3::Bucket"
         }
     }
