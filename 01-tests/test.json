@@ -1,0 +1,7 @@
+{
+    "Resources": {
+        "wescale-jd-test-json": {
+            "Type": "AWS::S3::Bucket"
+        }
+    }
+}
