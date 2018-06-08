@@ -1,6 +1,17 @@
 ---
 AWSTemplateFormatVersion: '2010-09-09'
-Description: "Creates the landscape for our environment"
+Description: "A simple stack to create an EC2 with network's resources correctly formed."
+
+Parameters:
+  ProjectName:
+    Type: String
+    Default: sandbox
+  Region:
+    Type: String
+    Default: eu-west-1
+  Initials:
+    Type: String
+    Default: undefined
 
 Resources:
   VPC:
@@ -11,4 +22,17 @@ Resources:
       EnableDnsHostnames: 'true'
       Tags:
       - Key: Name
-        Value: "sandbox-eu-west-1-jd"
+        Value: !Sub '${ProjectName}-${Region}-${Initials}'
+
+  PublicSubnet:
+    Type: "AWS::EC2::Subnet"
+    Properties:
+      VpcId: !Ref VPC
+      CidrBlock: 10.0.0.0/24
+      AvailabilityZone: !Sub '${Region}a'
+      MapPublicIpOnLaunch: 'true'
+      Tags:
+        - Key: Name
+          Value: !Sub '${ProjectName}-${Region}-${Initials}-public'
+        - Key: Description
+          Value: !Sub '${ProjectName}-${Region}-${Initials} public subnet in AZ ${Region}a'
