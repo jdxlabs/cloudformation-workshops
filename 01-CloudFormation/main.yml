@@ -42,3 +42,12 @@ Resources:
           Value: !Sub '${ProjectName}-${Region}-${Initials}-public'
         - Key: Description
           Value: !Sub '${ProjectName}-${Region}-${Initials} public subnet in AZ ${Region}a'
+
+  Igw:
+    Type: "AWS::EC2::InternetGateway"
+
+  IgwAttachVPC:
+    Type: "AWS::EC2::VPCGatewayAttachment"
+    Properties:
+      VpcId: !Ref VPC
+      InternetGatewayId: !Ref Igw
