@@ -21,13 +21,27 @@ aws cloudformation describe-stacks --stack-name=WorkshopStack
 }
 ```
 
-## To update the stack
+## To update the stack directly
 ```
 aws cloudformation update-stack --stack-name WorkshopStack --template-body file://./main.yml \
     --parameters ParameterKey=Initials,ParameterValue=$CF_WS_INITIALS
 ```
 
-## To delete at the end
+## To previsualize the changes before execution ("dry-run" feature)
+```
+aws cloudformation create-change-set --stack-name WorkshopStack --template-body file://./main.yml \
+    --parameters ParameterKey=Initials,ParameterValue=$CF_WS_INITIALS  --change-set-name changeset-1
+
+aws cloudformation describe-change-set --stack-name WorkshopStack --change-set-name changeset-1 | jq '.Changes[]'
+aws cloudformation execute-change-set --stack-name WorkshopStack --change-set-name changeset-1
+```
+
+## To watch the progression of the operation on the stack (creation, update, deletion)
+```
+watch -n1 "aws cloudformation describe-stacks --stack-name=WorkshopStack | jq '.Stacks[0].StackStatus'"
+```
+
+## To delete the stack at the end
 ```
 aws cloudformation delete-stack --stack-name WorkshopStack
 ```
