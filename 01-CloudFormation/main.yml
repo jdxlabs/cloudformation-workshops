@@ -9,6 +9,12 @@ Parameters:
   Region:
     Type: String
     Default: eu-west-1
+  VpcCidr:
+    Type: String
+    Default: 10.0.0.0/16
+  PublicSubnetCidr:
+    Type: String
+    Default: 10.0.0.0/24
   Initials:
     Type: String
     Default: undefined
@@ -17,7 +23,7 @@ Resources:
   VPC:
     Type: AWS::EC2::VPC
     Properties:
-      CidrBlock: 10.0.0.0/16
+      CidrBlock: !Ref VpcCidr
       EnableDnsSupport: 'true'
       EnableDnsHostnames: 'true'
       Tags:
@@ -28,7 +34,7 @@ Resources:
     Type: "AWS::EC2::Subnet"
     Properties:
       VpcId: !Ref VPC
-      CidrBlock: 10.0.0.0/24
+      CidrBlock: !Ref PublicSubnetCidr
       AvailabilityZone: !Sub '${Region}a'
       MapPublicIpOnLaunch: 'true'
       Tags:
