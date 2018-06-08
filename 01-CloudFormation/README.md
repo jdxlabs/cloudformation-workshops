@@ -1,4 +1,4 @@
-# Workshop02 : CloudFormation
+# Workshop01 : CloudFormation
 
 ```
 aws cloudformation create-stack --stack-name WorkshopStack --template-body file://./main.yml
