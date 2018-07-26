@@ -1,9 +1,6 @@
 ---
-AWSTemplateFormatVersion: '2010-09-09'
-Description: 'AWS CloudFormation Sample Template DynamoDB_Secondary_Indexes: Create
-  a DynamoDB table with local and global secondary indexes. **WARNING** This template
-  creates an Amazon DynamoDB table. You will be billed for the AWS resources used
-  if you create a stack from this template.'
+AWSTemplateFormatVersion: 2010-09-09
+Description: A DynamoDB table
 Parameters:
   ReadCapacityUnits:
     Description: Provisioned read throughput
