@@ -2,47 +2,41 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: An EC2 instance
 Parameters:
-Parameters:
+  Initials:
+    Type: String
   InstanceType:
     Type: String
     Default: t2.medium
-  VpcName:
-    Type: String
-  StackPrefix:
-    Type: String
-  IngressCidrSSH1:
-    Type: String
 Mappings:
-  AWSRegionToAMI:
+  AWSRegionToAMI: # CentOs Amis List, by regions
     eu-west-1:
       AMIID: ami-3548444c
+    # etc.
 Resources:
   Instance:
     Type: AWS::EC2::Instance
     Properties:
       ImageId: !FindInMap ['AWSRegionToAMI', !Ref 'AWS::Region', AMIID]
       InstanceType: !Ref 'InstanceType'
-      KeyName: !Sub '${StackPrefix}-bastion'
-      SecurityGroupIds:
-        - !Sub '${SecurityGroup.GroupId}'
-      SubnetId:
-        Fn::ImportValue: !Sub '${VpcName}-PublicSubnetAZ1'
+      KeyName: !Sub 'sbx-${Initials}-tests'
+      # SecurityGroupIds:
+      #   - !Sub '${SecurityGroup.GroupId}'
+      # SubnetId:
+      #   Fn::ImportValue: !Sub '${VpcName}-PublicSubnetAZ1'
       Tags:
         - Key: Name
-          Value: !Sub '${VpcName}-bastion'
+          Value: !Sub 'sbx-${Initials}-server'
 Outputs:
-  GitRevision:
-    Value: '#SL_AWS_BASE_INFRA_GIT_REVISION#'
   BastionPublicIp:
     Value: !Sub '${Instance.PublicIp}'
     Export:
-      Name: !Sub '${VpcName}-BastionPublicIp'
+      Name: !Sub 'sbx-${Initials}-server-public-ip'
   BastionPrivateIp:
     Value: !Sub '${Instance.PrivateIp}'
     Export:
-      Name: !Sub '${VpcName}-BastionPrivateIp'
+      Name: !Sub 'sbx-${Initials}-server-private-ip'
   BastionAZ:
     Value: !Sub '${Instance.AvailabilityZone}'
     Export:
-      Name: !Sub '${VpcName}-BastionAZ'
+      Name: !Sub 'sbx-${Initials}-server-az'
 
