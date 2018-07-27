@@ -1,0 +1,38 @@
+---
+AWSTemplateFormatVersion: 2010-09-09
+Description: An EC2 instance
+Parameters:
+  Initials:
+    Type: String
+  InstanceType:
+    Type: String
+    Default: t2.medium
+Mappings:
+  AWSRegionToAMI: # Windows Server 2016 Base Amis List, by regions
+    eu-west-1:
+      AMIID: ami-96e1f27c
+    # etc.
+Resources:
+  Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !FindInMap ['AWSRegionToAMI', !Ref 'AWS::Region', AMIID]
+      InstanceType: !Ref 'InstanceType'
+      KeyName: !Sub 'sbx-${Initials}-tests'
+      Tags:
+        - Key: Name
+          Value: !Sub 'sbx-${Initials}-server'
+Outputs:
+  BastionPublicIp:
+    Value: !Sub '${Instance.PublicIp}'
+    Export:
+      Name: !Sub 'sbx-${Initials}-server-public-ip'
+  BastionPrivateIp:
+    Value: !Sub '${Instance.PrivateIp}'
+    Export:
+      Name: !Sub 'sbx-${Initials}-server-private-ip'
+  BastionAZ:
+    Value: !Sub '${Instance.AvailabilityZone}'
+    Export:
+      Name: !Sub 'sbx-${Initials}-server-az'
+
