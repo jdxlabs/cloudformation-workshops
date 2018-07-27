@@ -2,6 +2,8 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: A DynamoDB table
 Parameters:
+  Initials:
+    Type: String
   ReadCapacityUnits:
     Description: Provisioned read throughput
     Type: Number
@@ -17,9 +19,10 @@ Parameters:
     MaxValue: '10000'
     ConstraintDescription: must be between 10 and 10000
 Resources:
-  TableOfBooks:
+  DynamoTable:
     Type: AWS::DynamoDB::Table
     Properties:
+      TableName: !Sub 'sbx-${Initials}-test'
       AttributeDefinitions:
       - AttributeName: Title
         AttributeType: S
@@ -61,5 +64,5 @@ Resources:
 Outputs:
   TableName:
     Value:
-      Ref: TableOfBooks
+      Ref: DynamoTable
     Description: Name of the newly created DynamoDB table
