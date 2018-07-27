@@ -7,22 +7,36 @@ Parameters:
   InstanceType:
     Type: String
     Default: t2.medium
+  IngressCidrSSH1:
+    Type: String
+    Default: 0.0.0.0/0
 Mappings:
   AWSRegionToAMI: # CentOs Amis List, by regions
     eu-west-1:
       AMIID: ami-3548444c
     # etc.
 Resources:
+  SecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub 'sbx-${Initials}-test-sg'
+      GroupDescription: Security Group for tests
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: !Ref 'IngressCidrSSH1'
+      Tags:
+        - Key: Name
+          Value: !Sub 'sbx-${Initials}-test-sg'
   Instance:
     Type: AWS::EC2::Instance
     Properties:
       ImageId: !FindInMap ['AWSRegionToAMI', !Ref 'AWS::Region', AMIID]
       InstanceType: !Ref 'InstanceType'
       KeyName: !Sub 'sbx-${Initials}-tests'
-      # SecurityGroupIds:
-      #   - !Sub '${SecurityGroup.GroupId}'
-      # SubnetId:
-      #   Fn::ImportValue: !Sub '${VpcName}-PublicSubnetAZ1'
+      SecurityGroupIds:
+        - !Sub '${SecurityGroup.GroupId}'
       Tags:
         - Key: Name
           Value: !Sub 'sbx-${Initials}-server'
