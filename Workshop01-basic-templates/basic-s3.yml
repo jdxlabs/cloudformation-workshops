@@ -2,17 +2,17 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: A S3 bucket
 Parameters:
-  GitRevision:
+  Initials:
     Type: String
 Resources:
   S3Bucket:
     Type: AWS::S3::Bucket
     Properties:
+      BucketName: !Sub 'sbx-${Initials}-test'
       AccessControl: PublicRead
       WebsiteConfiguration:
         IndexDocument: index.html
         ErrorDocument: error.html
-    DeletionPolicy: Retain
 Outputs:
   WebsiteURL:
     Value: !GetAtt [S3Bucket, WebsiteURL]
