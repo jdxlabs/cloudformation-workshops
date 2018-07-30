@@ -7,7 +7,7 @@ Parameters:
   InstanceType:
     Type: String
     Default: t2.medium
-  IngressCidrSSH1:
+  IngressCidr:
     Type: String
     Default: 0.0.0.0/0
 Mappings:
@@ -23,9 +23,17 @@ Resources:
       GroupDescription: Security Group for tests
       SecurityGroupIngress:
         - IpProtocol: tcp
-          FromPort: 3389
+          FromPort: 22 # SSH
+          ToPort: 22
+          CidrIp: !Ref 'IngressCidr'
+        - IpProtocol: tcp
+          FromPort: 3389 # RDP
           ToPort: 3389
-          CidrIp: !Ref 'IngressCidrSSH1'
+          CidrIp: !Ref 'IngressCidr'
+        - IpProtocol: tcp
+          FromPort: 5985 # PowerShell Remoting HTTP
+          ToPort: 5986 # PowerShell Remoting HTTPS
+          CidrIp: !Ref 'IngressCidr'
       Tags:
         - Key: Name
           Value: !Sub 'sbx-${Initials}-test-sg'
