@@ -11,4 +11,7 @@ You have to create, securely modify (with changeset), then delete them.
 You also have to create Outputs to store the values on AWS.
 
 ## Workshop #2
-TODO
+Build a static website with Amazon S3, Route 53 and CloudFront.
+You have a process [explained here](https://aws.amazon.com/getting-started/projects/host-static-website/?trk=gs_card).
+You can create it manually, then build it with CloudFormation.
+Just print "Hello world !", the point is to be confortable with CloudFront.
