@@ -1,0 +1,10 @@
+[
+    {
+        "ParameterKey": "Initials",
+        "ParameterValue": "<initials>"
+    },
+    {
+        "ParameterKey": "DomainName",
+        "ParameterValue": "<domain-name>"
+    }
+]

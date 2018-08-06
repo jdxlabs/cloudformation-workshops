@@ -1,0 +1,43 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: CloudFront Simple Test
+Parameters:
+  Region:
+    Type: String
+    Default: eu-west-1
+  Initials:
+    Type: String
+  DomainName:
+    Type: String
+Resources:
+  S3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub 'sbx-${Initials}-cftest.${DomainName}'
+      AccessControl: PublicRead
+      WebsiteConfiguration:
+        IndexDocument: index.html # upload it
+        ErrorDocument: error.html
+  S3BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket:
+        Ref: S3Bucket
+      PolicyDocument:
+        Statement:
+          -
+            Sid: PublicReadGetObject
+            Effect: Allow
+            Principal: "*"
+            Action: s3:GetObject
+            Resource: !Sub 'arn:aws:s3:::sbx-${Initials}-cftest.${DomainName}/*'
+  DNSRecord:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneName: !Sub '${DomainName}.'
+      Name: !Sub 'sbx-${Initials}-cftest.${DomainName}.'
+      Type: A
+      AliasTarget:
+        DNSName: "s3-website-eu-west-1.amazonaws.com"
+        EvaluateTargetHealth: false
+        HostedZoneId: "Z1BKCTXD74EZPE"
+  # CloudFront Distrib : TODO
