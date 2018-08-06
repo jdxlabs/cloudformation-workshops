@@ -1,11 +1,233 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: WebPageTest.org
 Parameters:
-  Region:
+  ParamRegion:
     Type: String
     Default: eu-west-1
-  Initials:
+  ParamInitials:
     Type: String
-  DomainName:
+  ParamCurrentCIDR:
     Type: String
+  ParamDomainName:
+    Type: String
+  ParamNetworkVpc:
+    Type: AWS::EC2::VPC::Id
+  ParamWPTClientSubnet:
+    Type: AWS::EC2::Subnet::Id
+  ParamWPTALBSubnet:
+      Description: Choose which subnets the Application Load Balancer should be deployed to
+      Type: List<AWS::EC2::Subnet::Id>
+  ParamWPTServerInstanceType:
+    Type: String
+    Default: t2.medium
+    AllowedValues:
+      - t2.micro
+      - t2.small
+      - t2.medium
+      - t2.large
+  ParamWPTClientInstanceType:
+    Type: String
+    Default: c4.large
+  ParamWPTServerAMI:
+    Type: String
+    Default: ami-9978f6ee
+  ParamKeyName:
+    Description: Name of an existing EC2 KeyPair to enable SSH access to the instance
+    Type: AWS::EC2::KeyPair::KeyName
+    ConstraintDescription: must be the name of an existing EC2 KeyPair.
+  ParamInstanceSecretKey:
+    Type: String
+    NoEcho: true
+  ParamInstanceKey:
+    Type: String
+    NoEcho: true
 Resources:
+  ResourceWPTServerSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: SG for WPT server
+      VpcId: !Ref ParamNetworkVpc
+      SecurityGroupIngress:
+        - IpProtocol: -1
+          FromPort: -1
+          ToPort: -1
+          CidrIp: !Ref ParamCurrentCIDR
+        - IpProtocol: -1
+          FromPort: -1
+          ToPort: -1
+          SourceSecurityGroupId: !Ref ResourceWPTClientSecurityGroup
+        - IpProtocol: -1
+          FromPort: -1
+          ToPort: -1
+          SourceSecurityGroupId: !Ref ResourceALBSecurityGroup
+      Tags:
+        - Key: Name
+          Value: WPT Server SG
+  ResourceWPTClientSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: SG for WPT Client
+      VpcId: !Ref ParamNetworkVpc
+      Tags:
+        - Key: Name
+          Value: WPT Client SG
+  ResourceALBSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: SG for ALB
+      VpcId: !Ref ParamNetworkVpc
+      SecurityGroupIngress:
+        # All from SeLoger IP
+        - IpProtocol: -1
+          FromPort: -1
+          ToPort: -1
+          CidrIp: 10.0.0.0/11
+        # All from WPT Client
+        - IpProtocol: -1
+          FromPort: -1
+          ToPort: -1
+          SourceSecurityGroupId: !Ref ResourceWPTClientSecurityGroup
+      Tags:
+        - Key: Name
+          Value: WPT ALB SG
+  ResourceWPTArchiveBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      AccessControl: Private
+      LifecycleConfiguration:
+        Rules:
+          - Id: GlacierRule
+            Prefix: glacier
+            Status: Enabled
+            ExpirationInDays: 120
+            Transitions:
+              - TransitionInDays: 60
+                StorageClass: Glacier
+      Tags:
+        - Key: Name
+          Value: WPT Bucket
+  ResourceWPTRecordSetGroup:
+    Type: AWS::Route53::RecordSetGroup
+    Properties:
+      HostedZoneId: Z3N1APNY1CJLDD
+      Comment: RecordSet group for WebPageTest
+      RecordSets:
+        - Name: webpagetest.aws.seloger.tools.
+          Type: A
+          AliasTarget:
+            HostedZoneId: !GetAtt ResourceALBWPT.CanonicalHostedZoneID
+            DNSName: !GetAtt ResourceALBWPT.DNSName
+  ResourceALBWPT:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Scheme: internal
+      Subnets: !Ref ParamWPTALBSubnet
+      LoadBalancerAttributes:
+        - Key: idle_timeout.timeout_seconds
+          Value: 50
+      SecurityGroups: [!Ref ResourceALBSecurityGroup]
+  ResourceALBWPTListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      LoadBalancerArn: !Ref ResourceALBWPT
+      Port: 80
+      Protocol: HTTP
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref ResourceWPTTargetGroup
+  ResourceWPTTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      HealthCheckPath: /
+      HealthCheckIntervalSeconds: 30
+      HealthCheckProtocol: HTTP
+      HealthCheckTimeoutSeconds: 10
+      HealthyThresholdCount: 4
+      Matcher:
+        HttpCode: '200'
+      Port: 80
+      Protocol: HTTP
+      TargetGroupAttributes:
+        - Key: deregistration_delay.timeout_seconds
+          Value: '20'
+      UnhealthyThresholdCount: 3
+      VpcId: !Ref ParamNetworkVpc
+  ResourceWPTAutoScalingGroup:
+    Type: "AWS::AutoScaling::AutoScalingGroup"
+    # CreationPolicy:
+    #   AutoScalingCreationPolicy:
+    #     MinSuccessfulInstancesPercent: 100
+    #   ResourceSignal:
+    #     Timeout: PT10M
+    UpdatePolicy:
+      AutoScalingRollingUpdate:
+        MinInstancesInService: 0
+        MaxBatchSize: 1
+        SuspendProcesses:
+          - HealthCheck
+          - ReplaceUnhealthy
+          - AZRebalance
+          - AlarmNotification
+          - ScheduledActions
+      # AutoScalingReplacingUpdate:
+      #   WillReplace: true
+    Properties:
+      VPCZoneIdentifier: !Ref ParamWPTALBSubnet
+      LaunchConfigurationName: !Ref ResourceWPTLaunchConfig
+      HealthCheckType: ELB
+      HealthCheckGracePeriod: 300
+      MinSize: 1
+      DesiredCapacity: 1
+      MaxSize: 1
+      TargetGroupARNs: [!Ref ResourceWPTTargetGroup]
+      Tags:
+        - Key: Name
+          Value: AutoScalingGroup WPT
+          PropagateAtLaunch: true
+  ResourceWPTLaunchConfig:
+    Type: AWS::AutoScaling::LaunchConfiguration
+    Properties:
+      ImageId: !Ref ParamWPTServerAMI
+      KeyName: !Ref ParamKeyName
+      SecurityGroups: [!Ref ResourceWPTServerSecurityGroup]
+      InstanceType: !Ref ParamWPTServerInstanceType
+      UserData:
+        Fn::Base64: !Sub |
+          ec2_key=${ParamInstanceKey}
+          ec2_secret=${ParamSecretKey}
+          headless=0
+          iq=80
+          pngss=1
+          ec2_instance_size=${ParamWPTClientInstanceType}
+          EC2.default=${ParamWPTClientRegion}
+          EC2.${ParamWPTClientRegion}.securityGroup=${ResourceWPTClientSecurityGroup}
+          EC2.${ParamWPTClientRegion}.subnetId=${ParamWPTClientSubnet}
+          EC2.ScaleFactor=50
+          EC2.${ParamWPTClientRegion}.min=1
+          EC2.${ParamWPTClientRegion}.max=10
+          ec2_prune_volumes=1
+          contact=antonio.gomes@seloger.com
+          publishTo=
+          waterfall_show_user_timing=1
+          maxruns=400
+          allowNonFQDN=1
+          medianMetric=SpeedIndex
+          shard_tests=1
+          allowPrivate=1
+          UAModifier=
+          ec2_use_server_private_ip=1
+          archive_s3_server=s3.amazonaws.com
+          archive_s3_key=${ParamKey}
+          archive_s3_secret=${ParamSecretKey}
+          archive_s3_bucket=${ResourceWPTArchiveBucket}
+          archive_days=0
+          cron_archive=1
+          api_key=2018
+          host=webpagetest.aws.seloger.tools
+Outputs:
+  OutputDnsName:
+    Value: !GetAtt ResourceALBWPT.DNSName
+  OutputWPTArchiveBucketEndpoint:
+    Value: !GetAtt ResourceWPTArchiveBucket.DomainName
+  OutputURLWPT:
+    Value: webpagetest.aws.seloger.tools
