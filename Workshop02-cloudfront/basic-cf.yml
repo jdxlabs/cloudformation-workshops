@@ -46,6 +46,7 @@ Resources:
       DistributionConfig:
         S3Origin:
           DNSName: !Sub '${S3Bucket.DomainName}'
+        # HttpVersion: http2
         Enabled: 'true'
       Tags:
         - Key: Name
