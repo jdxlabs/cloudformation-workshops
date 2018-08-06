@@ -8,6 +8,8 @@ Parameters:
     Type: String
   DomainName:
     Type: String
+  S3HostedZoneId:
+    Type: String
 Resources:
   S3Bucket:
     Type: AWS::S3::Bucket
@@ -39,14 +41,13 @@ Resources:
       AliasTarget:
         DNSName: "s3-website-eu-west-1.amazonaws.com"
         EvaluateTargetHealth: false
-        HostedZoneId: "Z1BKCTXD74EZPE"
+        HostedZoneId: !Ref 'S3HostedZoneId'
   CFDistrib:
     Type: "AWS::CloudFront::Distribution"
     Properties:
       DistributionConfig:
         S3Origin:
           DNSName: !Sub '${S3Bucket.DomainName}'
-        # HttpVersion: http2
         Enabled: 'true'
       Tags:
         - Key: Name

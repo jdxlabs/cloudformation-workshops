@@ -6,5 +6,9 @@
     {
         "ParameterKey": "DomainName",
         "ParameterValue": "<domain-name>"
+    },
+    {
+        "ParameterKey": "S3HostedZoneId",
+        "ParameterValue": "<id>"
     }
 ]
