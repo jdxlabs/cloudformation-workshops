@@ -15,7 +15,7 @@ Resources:
       BucketName: !Sub 'sbx-${Initials}-cftest.${DomainName}'
       AccessControl: PublicRead
       WebsiteConfiguration:
-        IndexDocument: index.html # upload it
+        IndexDocument: index.html
         ErrorDocument: error.html
   S3BucketPolicy:
     Type: AWS::S3::BucketPolicy
@@ -40,4 +40,16 @@ Resources:
         DNSName: "s3-website-eu-west-1.amazonaws.com"
         EvaluateTargetHealth: false
         HostedZoneId: "Z1BKCTXD74EZPE"
-  # CloudFront Distrib : TODO
+  CFDistrib:
+    Type: "AWS::CloudFront::Distribution"
+    Properties:
+      DistributionConfig:
+        S3Origin:
+          DNSName: !Sub '${S3Bucket.DomainName}'
+        Enabled: 'true'
+      Tags:
+        - Key: Name
+          Value: !Sub 'sbx-${Initials}-cftest.${DomainName}'
+Outputs:
+  WebsiteURL:
+    Value: !GetAtt [S3Bucket, WebsiteURL]
