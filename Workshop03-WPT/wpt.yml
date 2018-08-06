@@ -1,0 +1,11 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: WebPageTest.org
+Parameters:
+  Region:
+    Type: String
+    Default: eu-west-1
+  Initials:
+    Type: String
+  DomainName:
+    Type: String
+Resources:
