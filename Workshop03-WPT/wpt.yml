@@ -18,7 +18,7 @@ Parameters:
     Type: AWS::EC2::VPC::Id
   ParamWPTClientSubnet:
     Type: AWS::EC2::Subnet::Id
-  ParamWPTALBSubnet:
+  ParamWPTALBSubnets:
       Description: Choose which subnets the Application Load Balancer should be deployed to
       Type: List<AWS::EC2::Subnet::Id>
   ParamWPTServerInstanceType:
@@ -123,7 +123,7 @@ Resources:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
     Properties:
       Scheme: internal
-      Subnets: !Ref ParamWPTALBSubnet
+      Subnets: !Ref ParamWPTALBSubnets
       LoadBalancerAttributes:
         - Key: idle_timeout.timeout_seconds
           Value: 50
@@ -174,7 +174,7 @@ Resources:
       # AutoScalingReplacingUpdate:
       #   WillReplace: true
     Properties:
-      VPCZoneIdentifier: !Ref ParamWPTALBSubnet
+      VPCZoneIdentifier: !Ref ParamWPTALBSubnets
       LaunchConfigurationName: !Ref ResourceWPTLaunchConfig
       HealthCheckType: ELB
       HealthCheckGracePeriod: 300
