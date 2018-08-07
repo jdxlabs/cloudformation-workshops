@@ -6,11 +6,12 @@ Workshops about Cloud Formation on AWS
 ### Commandss
 ```
 export AWS_PRsOFILE=<aws-profile>
-aws cloudformation create-stack --stack-name <stack-name> --template-body file://./basic-cf.yml --parameters file://./params.json
+aws cloudformation validate-template --template-body file://./wpt.yml
+aws cloudformation create-stack --stack-name <stack-name> --template-body file://./wpt.yml --parameters file://./params.json
 watch -n1 'aws cloudformation describe-stacks --stack-name <stack-name> | grep StackStatus'
 
 # Update(s)
-aws cloudformation update-stack --stack-name <stack-name> --template-body file://./basic-cf.yml --parameters file://./params.json
+aws cloudformation update-stack --stack-name <stack-name> --template-body file://./wpt.yml --parameters file://./params.json
 
 # Delete
 aws cloudformation delete-stack --stack-name <stack-name>
