@@ -122,7 +122,7 @@ Resources:
   ResourceALBWPT:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
     Properties:
-      Scheme: internal
+      Scheme: internet-facing
       Subnets: !Ref ParamWPTALBSubnets
       LoadBalancerAttributes:
         - Key: idle_timeout.timeout_seconds
@@ -184,7 +184,7 @@ Resources:
       TargetGroupARNs: [!Ref ResourceWPTTargetGroup]
       Tags:
         - Key: Name
-          Value: AutoScalingGroup WPT
+          Value: !Sub 'sbx-${ParamInitials}-wpt-server'
           PropagateAtLaunch: true
   ResourceWPTLaunchConfig:
     Type: AWS::AutoScaling::LaunchConfiguration
