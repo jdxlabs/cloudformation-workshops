@@ -10,8 +10,6 @@ Parameters:
     Type: String
   ParamIngressVpcCIDR:
     Type: String
-  ParamIngressCIDR:
-    Type: String
   ParamDomainName:
     Type: String
   ParamHostedZoneId:
@@ -37,7 +35,7 @@ Parameters:
   ParamWPTServerAMI:
     Type: String
     Default: ami-9978f6ee
-  ParamKeyName:
+  ParamKeypairName:
     Description: Name of an existing EC2 KeyPair to enable SSH access to the instance
     Type: AWS::EC2::KeyPair::KeyName
     ConstraintDescription: must be the name of an existing EC2 KeyPair.
@@ -192,7 +190,7 @@ Resources:
     Type: AWS::AutoScaling::LaunchConfiguration
     Properties:
       ImageId: !Ref ParamWPTServerAMI
-      KeyName: !Ref ParamKeyName
+      KeyName: !Ref ParamKeypairName
       SecurityGroups: [!Ref ResourceWPTServerSecurityGroup]
       InstanceType: !Ref ParamWPTServerInstanceType
       UserData:
