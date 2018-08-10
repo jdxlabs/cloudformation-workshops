@@ -19,3 +19,9 @@ Just print "Hello world !", the point is to be confortable with CloudFront.
 ## Workshop #3
 Build an EC2 instance that hosts the Webpagetest program, with EC2 and ELBS (CloudFront isn't relevant for this usecase).  
 You can access to the program [here](https://webpagetest.org).
+
+## Workshop #4
+Build a simple VPC with public and private multi zones subnets.  
+
+## Workshop #5
+On to of the VPC you've just built, create a simple Node.JS server on the public subnet.  
