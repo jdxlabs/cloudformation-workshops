@@ -1,27 +1,27 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: WebPageTest.org
 Parameters:
-  ParamRegion:
+  Region:
     Type: String
     Default: eu-west-1
-  ParamInitials:
+  Initials:
     Type: String
-  ParamContactEmail:
+  ContactEmail:
     Type: String
-  ParamIngressVpcCIDR:
+  IngressVpcCIDR:
     Type: String
-  ParamDomainName:
+  DomainName:
     Type: String
-  ParamHostedZoneId:
+  HostedZoneId:
     Type: String
-  ParamNetworkVpc:
+  NetworkVpc:
     Type: AWS::EC2::VPC::Id
-  ParamWPTClientSubnet:
+  WPTClientSubnet:
     Type: AWS::EC2::Subnet::Id
-  ParamWPTALBSubnets:
+  WPTALBSubnets:
       Description: Choose which subnets the Application Load Balancer should be deployed to
       Type: List<AWS::EC2::Subnet::Id>
-  ParamWPTServerInstanceType:
+  WPTServerInstanceType:
     Type: String
     Default: t2.medium
     AllowedValues:
@@ -29,70 +29,70 @@ Parameters:
       - t2.small
       - t2.medium
       - t2.large
-  ParamWPTClientInstanceType:
+  WPTClientInstanceType:
     Type: String
     Default: c4.large
-  ParamWPTServerAMI:
+  WPTServerAMI:
     Type: String
     Default: ami-9978f6ee
-  ParamKeypairName:
+  KeypairName:
     Description: Name of an existing EC2 KeyPair to enable SSH access to the instance
     Type: AWS::EC2::KeyPair::KeyName
     ConstraintDescription: must be the name of an existing EC2 KeyPair.
-  ParamAWSAccessKey:
+  AWSAccessKey:
     Type: String
     NoEcho: true
-  ParamAWSSecretKey:
+  AWSSecretKey:
     Type: String
     NoEcho: true
 Resources:
-  ResourceWPTServerSecurityGroup:
+  WPTServerSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: SG for WPT server
-      VpcId: !Ref ParamNetworkVpc
+      VpcId: !Ref NetworkVpc
       SecurityGroupIngress:
         - IpProtocol: -1
           FromPort: -1
           ToPort: -1
-          CidrIp: !Ref ParamIngressVpcCIDR
+          CidrIp: !Ref IngressVpcCIDR
         - IpProtocol: -1
           FromPort: -1
           ToPort: -1
-          SourceSecurityGroupId: !Ref ResourceWPTClientSecurityGroup
+          SourceSecurityGroupId: !Ref WPTClientSecurityGroup
         - IpProtocol: -1
           FromPort: -1
           ToPort: -1
-          SourceSecurityGroupId: !Ref ResourceALBSecurityGroup
+          SourceSecurityGroupId: !Ref ALBSecurityGroup
       Tags:
         - Key: Name
-          Value: !Sub 'sbx-${ParamInitials}-wpt-server-sg'
-  ResourceWPTClientSecurityGroup:
+          Value: !Sub 'sbx-${Initials}-wpt-server-sg'
+  WPTClientSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: SG for WPT Client
-      VpcId: !Ref ParamNetworkVpc
+      VpcId: !Ref NetworkVpc
       Tags:
         - Key: Name
-          Value: !Sub 'sbx-${ParamInitials}-wpt-client-sg'
-  ResourceALBSecurityGroup:
+          Value: !Sub 'sbx-${Initials}-wpt-client-sg'
+  ALBSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: SG for ALB
-      VpcId: !Ref ParamNetworkVpc
+      VpcId: !Ref NetworkVpc
       SecurityGroupIngress:
         - IpProtocol: -1
           FromPort: -1
           ToPort: -1
-          CidrIp: !Ref ParamIngressVpcCIDR
+          CidrIp: !Ref IngressVpcCIDR
         - IpProtocol: -1
           FromPort: -1
           ToPort: -1
-          SourceSecurityGroupId: !Ref ResourceWPTClientSecurityGroup
+          SourceSecurityGroupId: !Ref WPTClientSecurityGroup
       Tags:
         - Key: Name
-          Value: !Sub 'sbx-${ParamInitials}-wpt-alb-sg'
-  ResourceWPTArchiveBucket:
+          Value: !Sub 'sbx-${Initials}-wpt-alb-sg'
+  WPTArchiveBucket:
     Type: AWS::S3::Bucket
     Properties:
       AccessControl: Private
@@ -107,37 +107,37 @@ Resources:
                 StorageClass: Glacier
       Tags:
         - Key: Name
-          Value: !Sub 'sbx-${ParamInitials}-wpt-bucket'
-  ResourceWPTRecordSetGroup:
+          Value: !Sub 'sbx-${Initials}-wpt-bucket'
+  WPTRecordSetGroup:
     Type: AWS::Route53::RecordSetGroup
     Properties:
-      HostedZoneId: !Ref ParamHostedZoneId
+      HostedZoneId: !Ref HostedZoneId
       Comment: RecordSet group for WebPageTest
       RecordSets:
-        - Name: !Sub 'wpt-${ParamInitials}.${ParamDomainName}.'
+        - Name: !Sub 'wpt-${Initials}.${DomainName}.'
           Type: A
           AliasTarget:
-            HostedZoneId: !GetAtt ResourceALBWPT.CanonicalHostedZoneID
-            DNSName: !GetAtt ResourceALBWPT.DNSName
-  ResourceALBWPT:
+            HostedZoneId: !GetAtt ALBWPT.CanonicalHostedZoneID
+            DNSName: !GetAtt ALBWPT.DNSName
+  ALBWPT:
     Type: AWS::ElasticLoadBalancingV2::LoadBalancer
     Properties:
       Scheme: internet-facing
-      Subnets: !Ref ParamWPTALBSubnets
+      Subnets: !Ref WPTALBSubnets
       LoadBalancerAttributes:
         - Key: idle_timeout.timeout_seconds
           Value: 50
-      SecurityGroups: [!Ref ResourceALBSecurityGroup]
-  ResourceALBWPTListener:
+      SecurityGroups: [!Ref ALBSecurityGroup]
+  ALBWPTListener:
     Type: AWS::ElasticLoadBalancingV2::Listener
     Properties:
-      LoadBalancerArn: !Ref ResourceALBWPT
+      LoadBalancerArn: !Ref ALBWPT
       Port: 80
       Protocol: HTTP
       DefaultActions:
         - Type: forward
-          TargetGroupArn: !Ref ResourceWPTTargetGroup
-  ResourceWPTTargetGroup:
+          TargetGroupArn: !Ref WPTTargetGroup
+  WPTTargetGroup:
     Type: AWS::ElasticLoadBalancingV2::TargetGroup
     Properties:
       HealthCheckPath: /
@@ -153,8 +153,8 @@ Resources:
         - Key: deregistration_delay.timeout_seconds
           Value: '20'
       UnhealthyThresholdCount: 3
-      VpcId: !Ref ParamNetworkVpc
-  ResourceWPTAutoScalingGroup:
+      VpcId: !Ref NetworkVpc
+  WPTAutoScalingGroup:
     Type: "AWS::AutoScaling::AutoScalingGroup"
     # CreationPolicy:
     #   AutoScalingCreationPolicy:
@@ -174,41 +174,41 @@ Resources:
       # AutoScalingReplacingUpdate:
       #   WillReplace: true
     Properties:
-      VPCZoneIdentifier: !Ref ParamWPTALBSubnets
-      LaunchConfigurationName: !Ref ResourceWPTLaunchConfig
+      VPCZoneIdentifier: !Ref WPTALBSubnets
+      LaunchConfigurationName: !Ref WPTLaunchConfig
       HealthCheckType: ELB
       HealthCheckGracePeriod: 300
       MinSize: 1
       DesiredCapacity: 1
       MaxSize: 1
-      TargetGroupARNs: [!Ref ResourceWPTTargetGroup]
+      TargetGroupARNs: [!Ref WPTTargetGroup]
       Tags:
         - Key: Name
-          Value: !Sub 'sbx-${ParamInitials}-wpt-server'
+          Value: !Sub 'sbx-${Initials}-wpt-server'
           PropagateAtLaunch: true
-  ResourceWPTLaunchConfig:
+  WPTLaunchConfig:
     Type: AWS::AutoScaling::LaunchConfiguration
     Properties:
-      ImageId: !Ref ParamWPTServerAMI
-      KeyName: !Ref ParamKeypairName
-      SecurityGroups: [!Ref ResourceWPTServerSecurityGroup]
-      InstanceType: !Ref ParamWPTServerInstanceType
+      ImageId: !Ref WPTServerAMI
+      KeyName: !Ref KeypairName
+      SecurityGroups: [!Ref WPTServerSecurityGroup]
+      InstanceType: !Ref WPTServerInstanceType
       UserData:
         Fn::Base64: !Sub |
-          ec2_key=${ParamAWSAccessKey}
-          ec2_secret=${ParamAWSSecretKey}
+          ec2_key=${AWSAccessKey}
+          ec2_secret=${AWSSecretKey}
           headless=0
           iq=80
           pngss=1
-          ec2_instance_size=${ParamWPTClientInstanceType}
-          EC2.default=${ParamRegion}
-          EC2.${ParamRegion}.securityGroup=${ResourceWPTClientSecurityGroup}
-          EC2.${ParamRegion}.subnetId=${ParamWPTClientSubnet}
+          ec2_instance_size=${WPTClientInstanceType}
+          EC2.default=${Region}
+          EC2.${Region}.securityGroup=${WPTClientSecurityGroup}
+          EC2.${Region}.subnetId=${WPTClientSubnet}
           EC2.ScaleFactor=50
-          EC2.${ParamRegion}.min=1
-          EC2.${ParamRegion}.max=10
+          EC2.${Region}.min=1
+          EC2.${Region}.max=10
           ec2_prune_volumes=1
-          contact=${ParamContactEmail}
+          contact=${ContactEmail}
           publishTo=
           waterfall_show_user_timing=1
           maxruns=400
@@ -219,17 +219,17 @@ Resources:
           UAModifier=
           ec2_use_server_private_ip=1
           archive_s3_server=s3.amazonaws.com
-          archive_s3_key=${ParamAWSAccessKey}
-          archive_s3_secret=${ParamAWSSecretKey}
-          archive_s3_bucket=${ResourceWPTArchiveBucket}
+          archive_s3_key=${AWSAccessKey}
+          archive_s3_secret=${AWSSecretKey}
+          archive_s3_bucket=${WPTArchiveBucket}
           archive_days=0
           cron_archive=1
           api_key=2018
-          host=wpt-${ParamInitials}.${ParamDomainName}
+          host=wpt-${Initials}.${DomainName}
 Outputs:
-  OutputDnsName:
-    Value: !GetAtt ResourceALBWPT.DNSName
-  OutputWPTArchiveBucketEndpoint:
-    Value: !GetAtt ResourceWPTArchiveBucket.DomainName
-  OutputURLWPT:
-    Value: wpt-${ParamInitials}.${ParamDomainName}
+  DnsName:
+    Value: !GetAtt ALBWPT.DNSName
+  WPTArchiveBucketEndpoint:
+    Value: !GetAtt WPTArchiveBucket.DomainName
+  URLWPT:
+    Value: wpt-${Initials}.${DomainName}
