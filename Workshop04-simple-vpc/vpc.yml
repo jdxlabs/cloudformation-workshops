@@ -1,1 +1,33 @@
-# TODO
+AWSTemplateFormatVersion: 2010-09-09
+Description: Simple VPC
+Parameters:
+  ProjectName:
+    Type: String
+  Region:
+    Type: String
+    Default: eu-west-1
+  VpcCidr:
+    Type: String
+  PublicSubnetCidrA:
+    Type: String
+  PublicSubnetCidrB:
+    Type: String
+  PublicSubnetCidrC:
+    Type: String
+  PrivateSubnetCidrA:
+    Type: String
+  PrivateSubnetCidrB:
+    Type: String
+  PrivateSubnetCidrC:
+    Type: String
+Resources:
+  Vpc:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: !Ref VpcCidr
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+        - Key: Name
+          Value: !Sub '${ProjectName}-vpc'
+# Outputs:
