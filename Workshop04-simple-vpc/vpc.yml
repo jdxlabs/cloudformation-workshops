@@ -129,18 +129,18 @@ Resources:
       Tags:
         - Key: Name
           Value: !Sub '${Env}-node-server-sg'
-  NodeServerInstance:
-    Type: AWS::EC2::Instance
-    Properties:
-      ImageId: !FindInMap ['AWSRegionToCentOSAMI', !Ref 'AWS::Region', AMIID]
-      InstanceType: !Ref 'NodeServerInstanceType'
-      KeyName: !Ref 'KeyPairName'
-      SubnetId: !GetAtt 'SubnetStackA.Outputs.PublicSubnetId'
-      SecurityGroupIds:
-        - !Sub '${NodeServerSecurityGroup.GroupId}'
-      Tags:
-        - Key: Name
-          Value: !Sub '${Env}-node-server'
+  # NodeServerInstance:
+  #   Type: AWS::EC2::Instance
+  #   Properties:
+  #     ImageId: !FindInMap ['AWSRegionToCentOSAMI', !Ref 'AWS::Region', AMIID]
+  #     InstanceType: !Ref 'NodeServerInstanceType'
+  #     KeyName: !Ref 'KeyPairName'
+  #     SubnetId: !GetAtt 'SubnetStackA.Outputs.PublicSubnetId'
+  #     SecurityGroupIds:
+  #       - !Sub '${NodeServerSecurityGroup.GroupId}'
+  #     Tags:
+  #       - Key: Name
+  #         Value: !Sub '${Env}-node-server'
 Outputs:
   VpcId:
     Value: !Ref 'Vpc'
