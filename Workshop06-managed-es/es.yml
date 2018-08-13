@@ -23,7 +23,7 @@ Resources:
         Iops: 0
         VolumeSize: 10
         VolumeType: standard
-      Tag:
+      Tags:
         - Key: 'Name'
           Value: !Sub '${Env}-es-domain'
 Outputs:
