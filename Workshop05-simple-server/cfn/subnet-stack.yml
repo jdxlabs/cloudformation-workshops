@@ -1,5 +1,5 @@
 AWSTemplateFormatVersion: 2010-09-09
-Description: Subnet Stack for Simple VPC
+Description: Subnet Stack for Simple Server
 Parameters:
   Env:
     Type: String
