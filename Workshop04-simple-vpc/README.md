@@ -9,7 +9,7 @@ export AWS_PRsOFILE=<aws-profile>
 aws cloudformation validate-template --template-body file://./vpc.yml
 aws cloudformation validate-template --template-body file://./subnet-stack.yml
 
-aws s3 cp subnet-stack.yml s3://<mycompany>-sbx/<my-initials>/subnet-stack.yml
+aws s3 cp subnet-stack.yml s3://<mycompany>-sbx/<my-initials>/ws04/subnet-stack.yml
 
 aws cloudformation create-stack --stack-name <env>-ws04 --template-body file://./vpc.yml --parameters file://./params.json
 watch -n1 'aws cloudformation describe-stacks --stack-name <env>-ws04 | grep StackStatus'

@@ -1,0 +1,46 @@
+[
+    {
+        "ParameterKey": "Env",
+        "ParameterValue": ""
+    },
+    {
+        "ParameterKey": "S3TemplatePath",
+        "ParameterValue": ""
+    },
+    {
+        "ParameterKey": "OpsTeamCidr",
+        "ParameterValue": ""
+    },
+    {
+        "ParameterKey": "KeyPairName",
+        "ParameterValue": ""
+    },
+    {
+        "ParameterKey": "VpcCidr",
+        "ParameterValue": "11.0.0.0/16"
+    },
+    {
+        "ParameterKey": "PublicSubnetCidrA",
+        "ParameterValue": "11.0.10.0/24"
+    },
+    {
+        "ParameterKey": "PublicSubnetCidrB",
+        "ParameterValue": "11.0.20.0/24"
+    },
+    {
+        "ParameterKey": "PublicSubnetCidrC",
+        "ParameterValue": "11.0.30.0/24"
+    },
+    {
+        "ParameterKey": "PrivateSubnetCidrA",
+        "ParameterValue": "11.0.110.0/24"
+    },
+    {
+        "ParameterKey": "PrivateSubnetCidrB",
+        "ParameterValue": "11.0.120.0/24"
+    },
+    {
+        "ParameterKey": "PrivateSubnetCidrC",
+        "ParameterValue": "11.0.130.0/24"
+    }
+]
