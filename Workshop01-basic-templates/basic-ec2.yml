@@ -12,10 +12,9 @@ Parameters:
     Type: String
     Default: 0.0.0.0/0
 Mappings:
-  AWSRegionToAMI: # CentOs Amis List, by regions
+  AWSRegionToAMI: # CentOs
     eu-west-1:
-      AMIID: ami-3548444c
-    # etc.
+      AMIID: ami-6e28b517
 Resources:
   SecurityGroup:
     Type: AWS::EC2::SecurityGroup

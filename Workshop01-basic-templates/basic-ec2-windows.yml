@@ -11,10 +11,9 @@ Parameters:
     Type: String
     Default: 0.0.0.0/0
 Mappings:
-  AWSRegionToAMI: # Windows Server 2016 Base Amis List, by regions
+  AWSRegionToAMI: # Windows Server 2016 Base
     eu-west-1:
       AMIID: ami-96e1f27c
-    # etc.
 Resources:
   SecurityGroup:
     Type: AWS::EC2::SecurityGroup
