@@ -25,3 +25,6 @@ Build a simple VPC with public and private multi zones subnets.
 
 ## Workshop #5
 On to of the VPC you've just built, create a simple Node.JS server on the public subnet.  
+
+## Workshop #6
+Build a managed ES domain.  

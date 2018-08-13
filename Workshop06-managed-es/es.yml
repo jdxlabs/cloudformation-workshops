@@ -1,0 +1,35 @@
+---
+AWSTemplateFormatVersion: 2010-09-09
+Description: An Elasticsearch domain
+Parameters:
+  Env:
+    Type: String
+  ESInstanceType:
+    Type: String
+    Default: t2.medium.elasticsearch
+  ESVersion:
+    Type: String
+    Default: 6.2
+Resources:
+  ESDomain:
+    Type: "AWS::Elasticsearch::Domain"
+    Properties:
+      ElasticsearchVersion: !Ref 'ESVersion'
+      ElasticsearchClusterConfig:
+        InstanceCount: '1'
+        InstanceType: !Ref 'ESInstanceType'
+      EBSOptions:
+        EBSEnabled: 'true'
+        Iops: 0
+        VolumeSize: 10
+        VolumeType: standard
+      Tag:
+        - Key: 'Name'
+          Value: !Sub '${Env}-es-domain'
+Outputs:
+  ESArn:
+    Value: !GetAtt [ESDomain, DomainArn]
+    Description: Arn for the elasticsearch domain
+  ESEndpoint:
+    Value: !GetAtt [ESDomain, DomainEndpoint]
+    Description: Endpoint for the elasticsearch domain
