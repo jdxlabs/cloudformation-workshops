@@ -163,3 +163,15 @@ Outputs:
         - !GetAtt 'SubnetStackC.Outputs.PrivateSubnetId'
     Export:
       Name: !Sub '${Env}-private-subnets'
+  NodeServerPublicIp:
+    Value: !Sub '${NodeServerInstance.PublicIp}'
+    Export:
+      Name: !Sub '${Env}-node-server-public-ip'
+  NodeServerPrivateIp:
+    Value: !Sub '${NodeServerInstance.PrivateIp}'
+    Export:
+      Name: !Sub '${Env}-node-server-private-ip'
+  NodeServerAZ:
+    Value: !Sub '${NodeServerInstance.AvailabilityZone}'
+    Export:
+      Name: !Sub '${Env}-node-server-az'
