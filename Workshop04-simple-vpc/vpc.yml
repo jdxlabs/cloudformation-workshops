@@ -43,6 +43,7 @@ Resources:
         PublicSubnetCidr: !Ref 'PublicSubnetCidrA'
         PrivateSubnetCidr: !Ref 'PrivateSubnetCidrA'
         AZ: !Sub '${Region}a'
+        MainRouteTableId: !Ref 'MainRouteTable'
       Tags:
         - Key: Stack
           Value: !Ref 'AWS::StackName'
@@ -56,6 +57,7 @@ Resources:
         PublicSubnetCidr: !Ref 'PublicSubnetCidrB'
         PrivateSubnetCidr: !Ref 'PrivateSubnetCidrB'
         AZ: !Sub '${Region}b'
+        MainRouteTableId: !Ref 'MainRouteTable'
       Tags:
         - Key: Stack
           Value: !Ref 'AWS::StackName'
@@ -69,6 +71,7 @@ Resources:
         PublicSubnetCidr: !Ref 'PublicSubnetCidrC'
         PrivateSubnetCidr: !Ref 'PrivateSubnetCidrC'
         AZ: !Sub '${Region}c'
+        MainRouteTableId: !Ref 'MainRouteTable'
       Tags:
         - Key: Stack
           Value: !Ref 'AWS::StackName'
@@ -81,6 +84,39 @@ Resources:
   IgwAttach:
     Type: AWS::EC2::VPCGatewayAttachment
     Properties:
-      InternetGatewayId: !Ref Igw
-      VpcId: !Ref Vpc
-# Outputs:
+      InternetGatewayId: !Ref 'Igw'
+      VpcId: !Ref 'Vpc'
+  MainRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref 'Vpc'
+      Tags:
+        - Key: Name
+          Value: !Sub '${Env}-main-route-table'
+  MainRouteIgw:
+      Type: AWS::EC2::Route
+      Properties:
+        RouteTableId: !Ref 'MainRouteTable'
+        DestinationCidrBlock: 0.0.0.0/0
+        GatewayId: !Ref 'Igw'
+Outputs:
+  VpcId:
+    Value: !Ref 'Vpc'
+    Export:
+      Name: !Sub '${Env}-vpc-id'
+  PublicSubnets:
+    Value: !Join
+      - ','
+      - - !GetAtt 'SubnetStackA.Outputs.PublicSubnetId'
+        - !GetAtt 'SubnetStackB.Outputs.PublicSubnetId'
+        - !GetAtt 'SubnetStackC.Outputs.PublicSubnetId'
+    Export:
+      Name: !Sub '${Env}-public-subnets'
+  PrivateSubnets:
+    Value: !Join
+      - ','
+      - - !GetAtt 'SubnetStackA.Outputs.PrivateSubnetId'
+        - !GetAtt 'SubnetStackB.Outputs.PrivateSubnetId'
+        - !GetAtt 'SubnetStackC.Outputs.PrivateSubnetId'
+    Export:
+      Name: !Sub '${Env}-private-subnets'

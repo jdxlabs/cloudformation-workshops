@@ -13,6 +13,8 @@ Parameters:
     Type: String
   AZ:
     Type: AWS::EC2::AvailabilityZone::Name
+  MainRouteTableId:
+    Type: String
 Resources:
   PublicSubnet:
     Type: AWS::EC2::Subnet
@@ -20,6 +22,7 @@ Resources:
       VpcId: !Ref 'VpcId'
       CidrBlock: !Ref PublicSubnetCidr
       AvailabilityZone: !Ref 'AZ'
+      MapPublicIpOnLaunch: true
       Tags:
         - Key: Name
           Value: !Sub '${Env}-${AZ}-public'
@@ -42,3 +45,35 @@ Resources:
       Tags:
         - Key: Name
           Value: !Sub '${Env}-igw'
+  PrivateRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref 'VpcId'
+      Tags:
+        - Key: Name
+          Value: !Sub '${Env}-private-route-table'
+  PrivateRouteNgw:
+      Type: AWS::EC2::Route
+      Properties:
+        RouteTableId: !Ref 'PrivateRouteTable'
+        DestinationCidrBlock: 0.0.0.0/0
+        NatGatewayId: !Ref 'Ngw'
+  PrivateRouteTableToPrivateSubnetAssoc:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref PrivateRouteTable
+      SubnetId: !Ref PrivateSubnet
+  MainRouteTableToPublicSubnetAssoc:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref MainRouteTableId
+      SubnetId: !Ref PublicSubnet
+Outputs:
+  PublicSubnetId:
+    Value: !Ref 'PublicSubnet'
+    Export:
+      Name: !Sub '${Env}-${AZ}-public-subnet-id'
+  PrivateSubnetId:
+    Value: !Ref 'PrivateSubnet'
+    Export:
+      Name: !Sub '${Env}-${AZ}-private-subnet-id'
