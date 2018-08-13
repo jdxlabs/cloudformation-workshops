@@ -72,4 +72,15 @@ Resources:
       Tags:
         - Key: Stack
           Value: !Ref 'AWS::StackName'
+  Igw:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: !Sub '${Env}-igw'
+  IgwAttach:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      InternetGatewayId: !Ref Igw
+      VpcId: !Ref Vpc
 # Outputs:
