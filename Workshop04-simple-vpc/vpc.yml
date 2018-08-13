@@ -43,36 +43,33 @@ Resources:
         PublicSubnetCidr: !Ref 'PublicSubnetCidrA'
         PrivateSubnetCidr: !Ref 'PrivateSubnetCidrA'
         AZ: !Sub '${Region}a'
-        # public_gateway_route_table_id
       Tags:
         - Key: Stack
           Value: !Ref 'AWS::StackName'
-  # SubnetStackB:
-  #   Type: AWS::CloudFormation::Stack
-  #   Properties:
-  #     TemplateURL: subnet-stack.yml
-  #     Parameters:
-  #       Env: !Ref 'Env'
-  #       VpcCidr: !Ref 'VpcCidr'
-  #       PublicSubnetCidr: !Ref 'PublicSubnetCidrB'
-  #       PrivateSubnetCidr: !Ref 'PrivateSubnetCidrB'
-  #       AZ: !Sub '${Region}b'
-  #       # public_gateway_route_table_id
-  #     Tags:
-  #       - Key: Stack
-  #         Value: !Ref 'AWS::StackName'
-  # SubnetStackC:
-  #   Type: AWS::CloudFormation::Stack
-  #   Properties:
-  #     TemplateURL: subnet-stack.yml
-  #     Parameters:
-  #       Env: !Ref 'Env'
-  #       VpcCidr: !Ref 'VpcCidr'
-  #       PublicSubnetCidr: !Ref 'PublicSubnetCidrC'
-  #       PrivateSubnetCidr: !Ref 'PrivateSubnetCidrC'
-  #       AZ: !Sub '${Region}c'
-  #       # public_gateway_route_table_id
-  #     Tags:
-  #       - Key: Stack
-  #         Value: !Ref 'AWS::StackName'
+  SubnetStackB:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub '${S3TemplatePath}/subnet-stack.yml'
+      Parameters:
+        Env: !Ref 'Env'
+        VpcId: !Ref 'Vpc'
+        PublicSubnetCidr: !Ref 'PublicSubnetCidrB'
+        PrivateSubnetCidr: !Ref 'PrivateSubnetCidrB'
+        AZ: !Sub '${Region}b'
+      Tags:
+        - Key: Stack
+          Value: !Ref 'AWS::StackName'
+  SubnetStackC:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub '${S3TemplatePath}/subnet-stack.yml'
+      Parameters:
+        Env: !Ref 'Env'
+        VpcId: !Ref 'Vpc'
+        PublicSubnetCidr: !Ref 'PublicSubnetCidrC'
+        PrivateSubnetCidr: !Ref 'PrivateSubnetCidrC'
+        AZ: !Sub '${Region}c'
+      Tags:
+        - Key: Stack
+          Value: !Ref 'AWS::StackName'
 # Outputs:
