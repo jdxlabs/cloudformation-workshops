@@ -3,6 +3,12 @@ Description: Simple VPC
 Parameters:
   Env:
     Type: String
+  OpsTeamCidr:
+    AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/([0-9]|[1-2][0-9]|3[0-2]))$
+    Type: String
+    Default: 0.0.0.0/0
+  KeyPairName:
+    Type: String
   S3TemplatePath:
     Type: String
   Region:
@@ -23,6 +29,13 @@ Parameters:
     Type: String
   PrivateSubnetCidrC:
     Type: String
+  NodeServerInstanceType:
+    Type: String
+    Default: t2.medium
+Mappings:
+  AWSRegionToCentOSAMI:
+    eu-west-1:
+      AMIID: ami-3548444c
 Resources:
   Vpc:
     Type: AWS::EC2::VPC
@@ -99,6 +112,35 @@ Resources:
         RouteTableId: !Ref 'MainRouteTable'
         DestinationCidrBlock: 0.0.0.0/0
         GatewayId: !Ref 'Igw'
+  NodeServerSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub '${Env}-node-server-sg'
+      GroupDescription: Security Group for Node Server
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: !Ref 'OpsTeamCidr'
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: '0.0.0.0/0'
+      Tags:
+        - Key: Name
+          Value: !Sub '${Env}-node-server-sg'
+  NodeServerInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !FindInMap ['AWSRegionToCentOSAMI', !Ref 'AWS::Region', AMIID]
+      InstanceType: !Ref 'NodeServerInstanceType'
+      KeyName: !Ref 'KeyPairName'
+      SubnetId: !GetAtt 'SubnetStackA.Outputs.PublicSubnetId'
+      SecurityGroupIds:
+        - !Sub '${NodeServerSecurityGroup.GroupId}'
+      Tags:
+        - Key: Name
+          Value: !Sub '${Env}-node-server'
 Outputs:
   VpcId:
     Value: !Ref 'Vpc'
