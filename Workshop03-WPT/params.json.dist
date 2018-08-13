@@ -1,0 +1,46 @@
+[
+    {
+        "ParameterKey": "Initials",
+        "ParameterValue": ""
+    },
+    {
+        "ParameterKey": "ContactEmail",
+        "ParameterValue": ""
+    },
+    {
+        "ParameterKey": "IngressVpcCIDR",
+        "ParameterValue": "0.0.0.0/0"
+    },
+    {
+        "ParameterKey": "DomainName",
+        "ParameterValue": ""
+    },
+    {
+        "ParameterKey": "HostedZoneId",
+        "ParameterValue": ""
+    },
+    {
+        "ParameterKey": "NetworkVpc",
+        "ParameterValue": ""
+    },
+    {
+        "ParameterKey": "WPTClientSubnet",
+        "ParameterValue": ""
+    },
+    {
+        "ParameterKey": "WPTALBSubnets",
+        "ParameterValue": ""
+    },
+    {
+        "ParameterKey": "KeypairName",
+        "ParameterValue": ""
+    },
+    {
+        "ParameterKey": "AWSAccessKey",
+        "ParameterValue": ""
+    },
+    {
+        "ParameterKey": "AWSSecretKey",
+        "ParameterValue": ""
+    }
+]

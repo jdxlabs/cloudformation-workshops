@@ -1,12 +1,15 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: Simple VPC
 Parameters:
-  ProjectName:
+  Env:
+    Type: String
+  S3TemplatePath:
     Type: String
   Region:
     Type: String
     Default: eu-west-1
   VpcCidr:
+    AllowedPattern: ^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])(\/(1[6-9]|2[0-8]))$
     Type: String
   PublicSubnetCidrA:
     Type: String
@@ -29,5 +32,47 @@ Resources:
       EnableDnsHostnames: true
       Tags:
         - Key: Name
-          Value: !Sub '${ProjectName}-vpc'
+          Value: !Sub '${Env}-vpc'
+  SubnetStackA:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: !Sub '${S3TemplatePath}/subnet-stack.yml'
+      Parameters:
+        Env: !Ref 'Env'
+        VpcId: !Ref 'Vpc'
+        PublicSubnetCidr: !Ref 'PublicSubnetCidrA'
+        PrivateSubnetCidr: !Ref 'PrivateSubnetCidrA'
+        AZ: !Sub '${Region}a'
+        # public_gateway_route_table_id
+      Tags:
+        - Key: Stack
+          Value: !Ref 'AWS::StackName'
+  # SubnetStackB:
+  #   Type: AWS::CloudFormation::Stack
+  #   Properties:
+  #     TemplateURL: subnet-stack.yml
+  #     Parameters:
+  #       Env: !Ref 'Env'
+  #       VpcCidr: !Ref 'VpcCidr'
+  #       PublicSubnetCidr: !Ref 'PublicSubnetCidrB'
+  #       PrivateSubnetCidr: !Ref 'PrivateSubnetCidrB'
+  #       AZ: !Sub '${Region}b'
+  #       # public_gateway_route_table_id
+  #     Tags:
+  #       - Key: Stack
+  #         Value: !Ref 'AWS::StackName'
+  # SubnetStackC:
+  #   Type: AWS::CloudFormation::Stack
+  #   Properties:
+  #     TemplateURL: subnet-stack.yml
+  #     Parameters:
+  #       Env: !Ref 'Env'
+  #       VpcCidr: !Ref 'VpcCidr'
+  #       PublicSubnetCidr: !Ref 'PublicSubnetCidrC'
+  #       PrivateSubnetCidr: !Ref 'PrivateSubnetCidrC'
+  #       AZ: !Sub '${Region}c'
+  #       # public_gateway_route_table_id
+  #     Tags:
+  #       - Key: Stack
+  #         Value: !Ref 'AWS::StackName'
 # Outputs:
