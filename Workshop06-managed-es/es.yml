@@ -16,10 +16,10 @@ Resources:
     Properties:
       ElasticsearchVersion: !Ref 'ESVersion'
       ElasticsearchClusterConfig:
-        InstanceCount: '1'
+        InstanceCount: 1
         InstanceType: !Ref 'ESInstanceType'
       EBSOptions:
-        EBSEnabled: 'true'
+        EBSEnabled: true
         Iops: 0
         VolumeSize: 10
         VolumeType: standard
