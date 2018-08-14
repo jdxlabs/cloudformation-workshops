@@ -9,7 +9,7 @@ export AWS_PRsOFILE=<aws-profile>
 aws cloudformation validate-template --template-body file://./es.yml
 
 aws cloudformation create-stack --stack-name <env>-ws06 --template-body file://./es.yml --parameters file://./params.json
-watch -n1 'aws cloudformation describe-stacks --stack-name <env>-ws04 | grep StackStatus'
+watch -n1 'aws cloudformation describe-stacks --stack-name <env>-ws06 | grep StackStatus'
 
 # Update(s)
 aws cloudformation update-stack --stack-name <env>-ws06 --template-body file://./es.yml --parameters file://./params.json
