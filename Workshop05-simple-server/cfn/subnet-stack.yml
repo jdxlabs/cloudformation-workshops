@@ -44,7 +44,7 @@ Resources:
       SubnetId: !Ref 'PublicSubnet'
       Tags:
         - Key: Name
-          Value: !Sub '${Env}-igw'
+          Value: !Sub '${Env}-ngw'
   PrivateRouteTable:
     Type: AWS::EC2::RouteTable
     Properties:
