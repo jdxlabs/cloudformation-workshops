@@ -5,7 +5,7 @@ Workshops about Cloud Formation on AWS
 
 ### Commandss
 ```
-export AWS_PRsOFILE=<aws-profile>
+export AWS_PROFILE=<aws-profile>
 aws cloudformation validate-template --template-body file://./es.yml
 
 aws cloudformation create-stack --stack-name <env>-ws06 --template-body file://./es.yml --parameters file://./params.json
