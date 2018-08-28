@@ -1,7 +1,6 @@
 # TODO
 
-* Attach to Route53 route
-* Add SSL
+* Attach to Route53 route (done)
 * Add access policy (done)
 
 ## Access policy example
