@@ -4,6 +4,14 @@ Description: An Elasticsearch domain
 Parameters:
   Env:
     Type: String
+  OpsTeamCidr:
+    Type: String
+    Default: 0.0.0.0/0
+  Region:
+    Type: String
+    Default: eu-west-1
+  AccountId:
+    Type: Number
   ESInstanceType:
     Type: String
     Default: t2.medium.elasticsearch
@@ -18,6 +26,17 @@ Resources:
       ElasticsearchClusterConfig:
         InstanceCount: 1
         InstanceType: !Ref 'ESInstanceType'
+      AccessPolicies:
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS: "*"
+            Action: es:*
+            Resource: !Sub 'arn:aws:es:${Region}:${AccountId}:domain/*'
+            Condition:
+              IpAddress:
+                aws:SourceIp: !Ref 'OpsTeamCidr'
       EBSOptions:
         EBSEnabled: true
         Iops: 0

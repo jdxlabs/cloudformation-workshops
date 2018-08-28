@@ -2,7 +2,7 @@
 
 * Attach to Route53 route
 * Add SSL
-* Add access policy
+* Add access policy (done)
 
 ## Access policy example
 ```
