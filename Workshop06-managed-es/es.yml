@@ -61,8 +61,8 @@ Resources:
         - !GetAtt 'ESDomain.DomainEndpoint'
 Outputs:
   ESArn:
-    Value: !GetAtt [ESDomain, DomainArn]
+    Value: !GetAtt 'ESDomain.DomainArn'
     Description: Arn for the elasticsearch domain
   ESEndpoint:
-    Value: !GetAtt [ESDomain, DomainEndpoint]
+    Value: !GetAtt 'ESDomain.DomainEndpoint'
     Description: Endpoint for the elasticsearch domain
