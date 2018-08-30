@@ -30,25 +30,46 @@ Resources:
       ElasticsearchClusterConfig:
         InstanceCount: 1
         InstanceType: !Ref 'ESInstanceType'
-      AccessPolicies:
-        Version: 2012-10-17
-        Statement:
-          - Effect: Allow
-            Principal:
-              AWS: "*"
-            Action: es:*
-            Resource: !Sub 'arn:aws:es:${Region}:${AccountId}:domain/*'
-            Condition:
-              IpAddress:
-                aws:SourceIp: !Ref 'OpsTeamCidr'
+      # AccessPolicies:
+      #   Version: 2012-10-17
+      #   Statement:
+      #     - Effect: Allow
+      #       Principal:
+      #         AWS: "*"
+      #       Action: es:*
+      #       Resource: !Sub 'arn:aws:es:${Region}:${AccountId}:domain/*'
+      #       Condition:
+      #         IpAddress:
+      #           aws:SourceIp: !Ref 'OpsTeamCidr'
       EBSOptions:
         EBSEnabled: true
         Iops: 0
         VolumeSize: 10
         VolumeType: standard
+      VPCOptions:
+        SubnetIds:
+          - Fn::ImportValue: !Sub '${Env}-${Region}a-private-subnet-id'
+        SecurityGroupIds:
+          - !Ref 'ESSecurityGroup'
       Tags:
         - Key: 'Name'
           Value: !Sub '${Env}-es-domain'
+  ESSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub '${Env}-es-sg'
+      GroupDescription: Security Group for ES
+      VpcId:
+        Fn::ImportValue: !Sub '${Env}-vpc-id'
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: '0.0.0.0/0'
+          # CidrIp: !Ref 'OpsTeamCidr'
+      Tags:
+        - Key: Name
+          Value: !Sub '${Env}-es-sg'
   DNSRecord:
     Type: AWS::Route53::RecordSet
     Properties:
