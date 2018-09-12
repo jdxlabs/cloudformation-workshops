@@ -3,7 +3,7 @@ Workshops about Cloud Formation on AWS
 
 ## Workshop05 : Simple server
 
-### Commandss
+### Commands
 ```
 export AWS_PROFILE=<aws-profile>
 aws cloudformation validate-template --template-body file://./vpc.yml

@@ -3,7 +3,7 @@ Workshops about Cloud Formation on AWS
 
 ## Workshop06 : Build a managed ES domain
 
-### Commandss
+### Commands
 ```
 export AWS_PROFILE=<aws-profile>
 aws cloudformation validate-template --template-body file://./es.yml

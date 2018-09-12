@@ -3,7 +3,7 @@ Workshops about Cloud Formation on AWS
 
 ## Workshop03 : WebPageTest (webpagetest.org) deployed on AWS with EC2 and Load balancer
 
-### Commandss
+### Commands
 ```
 export AWS_PROFILE=<aws-profile>
 aws cloudformation validate-template --template-body file://./wpt.yml
