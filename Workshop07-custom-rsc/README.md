@@ -11,8 +11,8 @@ aws cloudformation create-stack --stack-name <env>-ws07 --template-body file://.
 watch -n1 'aws cloudformation describe-stacks --stack-name <env>-ws03 | grep StackStatus'
 
 # Update(s)
-aws cloudformation update-stack --stack-name <env>-ws03 --template-body file://./wpt.yml --parameters file://./params.json
+aws cloudformation update-stack --stack-name <env>-ws07 --template-body file://./wpt.yml --parameters file://./params.json
 
 # Delete
-aws cloudformation delete-stack --stack-name <env>-ws03
+aws cloudformation delete-stack --stack-name <env>-ws07
 ```
