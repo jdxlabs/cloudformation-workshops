@@ -1,0 +1,41 @@
+---
+AWSTemplateFormatVersion: 2010-09-09
+Description: A Security Group
+Parameters:
+  Env:
+    Type: String
+  IngressCidrList:
+    Type: List<String>
+    Default: "10.0.0.0/8,11.0.0.0/8,12.0.0.0/8"
+Resources:
+  SecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupName: !Sub '${Env}-custom-rsc-test-sg'
+      GroupDescription: Security Group to test custom resources
+      VpcId:
+        Fn::ImportValue: !Sub '${Env}-vpc-id'
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp:
+            Fn::Select: [0, !Ref 'IngressCidrList']
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp:
+            Fn::Select: [1, !Ref 'IngressCidrList']
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp:
+            Fn::Select: [2, !Ref 'IngressCidrList']
+      SecurityGroupEgress:
+        - IpProtocol: -1
+          FromPort: 0
+          ToPort: 0
+          CidrIp: 0.0.0.0/0
+      Tags:
+        - Key: Name
+          Value: !Sub '${Env}-custom-rsc-test-sg'
