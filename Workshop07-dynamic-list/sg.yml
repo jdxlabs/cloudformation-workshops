@@ -8,9 +8,9 @@ Parameters:
     Type: List<String>
     Default: "10.0.0.0/8,empty,empty"
 Conditions:
-  Cidr0Exists: !Not [ !Equals [!Select [0, !Ref 'IngressCidrList'], empty]]
-  Cidr1Exists: !Not [ !Equals [!Select [1, !Ref 'IngressCidrList'], empty]]
-  Cidr2Exists: !Not [ !Equals [!Select [2, !Ref 'IngressCidrList'], empty]]
+  Cidr0Exists: !Not [!Equals [!Select [0, !Ref 'IngressCidrList'], empty]]
+  Cidr1Exists: !Not [!Equals [!Select [1, !Ref 'IngressCidrList'], empty]]
+  Cidr2Exists: !Not [!Equals [!Select [2, !Ref 'IngressCidrList'], empty]]
 Resources:
   SecurityGroup:
     Type: AWS::EC2::SecurityGroup
