@@ -28,3 +28,6 @@ On to of the VPC you've just built, create a simple Node.JS server on the public
 
 ## Workshop #6
 Build a managed ES domain.  
+
+## Workshop #7
+Create a dynmaic ingress cidr list for a Security Group.  
