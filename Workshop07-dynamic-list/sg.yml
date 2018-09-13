@@ -6,11 +6,11 @@ Parameters:
     Type: String
   IngressCidrList:
     Type: List<String>
-    Default: "10.0.0.0/8,null,null"
+    Default: "10.0.0.0/8,empty,empty"
 Conditions:
-  Cidr1Exists: !Not [ !Equals [!Select [0, !Ref 'IngressCidrList'], 'null']]
-  Cidr2Exists: !Not [ !Equals [!Select [1, !Ref 'IngressCidrList'], 'null']]
-  Cidr3Exists: !Not [ !Equals [!Select [2, !Ref 'IngressCidrList'], 'null']]
+  Cidr0Exists: !Not [ !Equals [!Select [0, !Ref 'IngressCidrList'], empty]]
+  Cidr1Exists: !Not [ !Equals [!Select [1, !Ref 'IngressCidrList'], empty]]
+  Cidr2Exists: !Not [ !Equals [!Select [2, !Ref 'IngressCidrList'], empty]]
 Resources:
   SecurityGroup:
     Type: AWS::EC2::SecurityGroup
@@ -21,21 +21,21 @@ Resources:
         Fn::ImportValue: !Sub '${Env}-vpc-id'
       SecurityGroupIngress:
         - Fn::If:
-            - 'Cidr1Exists'
+            - 'Cidr0Exists'
             - IpProtocol: tcp
               FromPort: 80
               ToPort: 80
               CidrIp: !Select [0, !Ref 'IngressCidrList']
             - !Ref 'AWS::NoValue'
         - Fn::If:
-            - 'Cidr2Exists'
+            - 'Cidr1Exists'
             - IpProtocol: tcp
               FromPort: 80
               ToPort: 80
               CidrIp: !Select [1, !Ref 'IngressCidrList']
             - !Ref 'AWS::NoValue'
         - Fn::If:
-            - 'Cidr3Exists'
+            - 'Cidr2Exists'
             - IpProtocol: tcp
               FromPort: 80
               ToPort: 80
