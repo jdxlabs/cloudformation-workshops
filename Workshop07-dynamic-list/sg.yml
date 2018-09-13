@@ -15,8 +15,8 @@ Resources:
   SecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupName: !Sub '${Env}-custom-rsc-test-sg'
-      GroupDescription: Security Group to test custom resources
+      GroupName: !Sub '${Env}-dyn-test-sg'
+      GroupDescription: Security Group for test purpose
       VpcId:
         Fn::ImportValue: !Sub '${Env}-vpc-id'
       SecurityGroupIngress:
@@ -48,4 +48,4 @@ Resources:
           CidrIp: 0.0.0.0/0
       Tags:
         - Key: Name
-          Value: !Sub '${Env}-custom-rsc-test-sg'
+          Value: !Sub '${Env}-dyn-test-sg'
