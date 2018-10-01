@@ -66,7 +66,7 @@ Resources:
           SourceSecurityGroupId: !Ref ALBSecurityGroup
       Tags:
         - Key: Name
-          Value: !Sub 'sbx-${Initials}-wpt-server-sg'
+          Value: !Sub '${Prefix}-${Initials}-wpt-server-sg'
   WPTClientSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -74,7 +74,7 @@ Resources:
       VpcId: !Ref NetworkVpc
       Tags:
         - Key: Name
-          Value: !Sub 'sbx-${Initials}-wpt-client-sg'
+          Value: !Sub '${Prefix}-${Initials}-wpt-client-sg'
   ALBSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -91,7 +91,7 @@ Resources:
           SourceSecurityGroupId: !Ref WPTClientSecurityGroup
       Tags:
         - Key: Name
-          Value: !Sub 'sbx-${Initials}-wpt-alb-sg'
+          Value: !Sub '${Prefix}-${Initials}-wpt-alb-sg'
   WPTArchiveBucket:
     Type: AWS::S3::Bucket
     Properties:
@@ -107,7 +107,7 @@ Resources:
                 StorageClass: Glacier
       Tags:
         - Key: Name
-          Value: !Sub 'sbx-${Initials}-wpt-bucket'
+          Value: !Sub '${Prefix}-${Initials}-wpt-bucket'
   WPTRecordSetGroup:
     Type: AWS::Route53::RecordSetGroup
     Properties:
@@ -184,7 +184,7 @@ Resources:
       TargetGroupARNs: [!Ref WPTTargetGroup]
       Tags:
         - Key: Name
-          Value: !Sub 'sbx-${Initials}-wpt-server'
+          Value: !Sub '${Prefix}-${Initials}-wpt-server'
           PropagateAtLaunch: true
   WPTLaunchConfig:
     Type: AWS::AutoScaling::LaunchConfiguration
