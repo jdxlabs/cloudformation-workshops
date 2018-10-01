@@ -6,6 +6,8 @@ Parameters:
     Default: eu-west-1
   Initials:
     Type: String
+  Prefix:
+    Type: String
   ContactEmail:
     Type: String
   IngressVpcCIDR:
