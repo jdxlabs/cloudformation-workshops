@@ -1,0 +1,21 @@
+---
+AWSTemplateFormatVersion: 2010-09-09
+Description: test
+Parameters:
+  Env:
+    Type: String
+    Default: DEV
+Mappings:
+  EnvMap:
+    DEV:
+      Lower: 'dev'
+    PROD:
+      Lower: 'prod'
+Resources:
+  S3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub 'sl-sbx-jd-temporary-test'
+Outputs:
+  EnvLower:
+    Value: !Join ['-', ['digital', !FindInMap ['EnvMap', !Ref 'Env', Lower], 'lambda-SecretManagerValue']]
