@@ -43,11 +43,11 @@ Resources:
         Iops: 0
         VolumeSize: 10
         VolumeType: standard
-      VPCOptions:
-        SubnetIds:
-          - Fn::ImportValue: !Sub '${Env}-${Region}a-public-subnet-id'
-        SecurityGroupIds:
-          - !Ref 'ESSecurityGroup'
+      # VPCOptions:
+      #   SubnetIds:
+      #     - Fn::ImportValue: !Sub '${Env}-${Region}a-public-subnet-id'
+      #   SecurityGroupIds:
+      #     - !Ref 'ESSecurityGroup'
       Tags:
         - Key: 'Name'
           Value: !Sub '${Env}-es-domain'
