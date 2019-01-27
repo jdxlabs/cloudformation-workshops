@@ -31,9 +31,9 @@ Parameters:
     Type: String
     Default: t2.medium
 Mappings:
-  AWSRegionToCentOSAMI:
+  AWSRegionToDebianAMI:
     eu-west-1:
-      AMIID: ami-6e28b517
+      AMIID: ami-059eb1e21e744e0f0
 Resources:
   Vpc:
     Type: AWS::EC2::VPC
@@ -131,7 +131,7 @@ Resources:
   NodeServerInstance:
     Type: AWS::EC2::Instance
     Properties:
-      ImageId: !FindInMap ['AWSRegionToCentOSAMI', !Ref 'AWS::Region', AMIID]
+      ImageId: !FindInMap ['AWSRegionToDebianAMI', !Ref 'AWS::Region', AMIID]
       InstanceType: !Ref 'NodeServerInstanceType'
       KeyName: !Ref 'KeyPairName'
       SubnetId: !GetAtt 'SubnetStackA.Outputs.PublicSubnetId'
