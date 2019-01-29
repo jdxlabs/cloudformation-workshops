@@ -29,7 +29,7 @@ Parameters:
     Type: String
   NodeServerInstanceType:
     Type: String
-    Default: t2.medium
+    Default: t2.nano
 Mappings:
   AWSRegionToDebianAMI:
     eu-west-1:
